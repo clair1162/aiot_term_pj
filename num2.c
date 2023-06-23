@@ -20,7 +20,7 @@ int timer = 0;
 bool stop = false;
 
 
-void Init() {
+void Setup() {
   int i;
   //int fd;
 
@@ -39,12 +39,9 @@ void Init() {
     digitalWrite(FndPin[i], LOW);
   }
 
-  //************************
-  //****** ADD - 3:45 ******
-  //************************
-  mkfifo(FIFO_FILE, 0666);
-  //fd = fopen(FIFO_FILE, O_RDONLY);
-  //close(fd);
+  if (access(FIFO_FILE, F_OK) == -1) {
+      mkfifo(FIFO_FILE, 0666);
+  }
 
    stop = false;
 }
@@ -198,37 +195,54 @@ void IPCThread(void* arg) {
 
 
 int main() {
-  printf("Content-type:text/html\n\n");
-  printf("<html>\n<head>\n<title>result</title>\n</head>\n<body>\n");
+  setbuf(stdout, NULL);
 
-  pthread_t p_thread[2];
-  int thr_id;
-  int status;
-  int a = 1;
-  int b = 2;
+	printf("Content-type:text/html\n\n");
+	printf("<html>\n<head>\n<title>STOP WATCH!</title>\n</head>\n");
+	printf("<body>\n<p>Start</p>\n");
 
-  Init();
+	int pid;
 
-  // thread 시작
-  thr_id = pthread_create(&p_thread[0], NULL, FndThread, (void *)&a);
-  
-  if(thr_id < 0) {
-    perror("FndThread create error: ");
-    exit(1);
-  }
- 
-  thr_id = pthread_create(&p_thread[1], NULL, IPCThread, (void *)&b);
+  Setup();
 
-  if(thr_id <0) {
-    perror("IPCThread create error: ");
-    exit(1);
-  }
+	//pid = fork();
+	//if(pid > 0) {
+	//	Setup();
+	//	perror("Init error: ");
+	//}
 
-  pthread_join(p_thread[0], (void **)&status);
-  pthread_join(p_thread[1], (void **)&status);
-  
-  // printf("<p>main data = %s</p>", data);
-  printf("</body>\n</html>");
+	//else if(pid == 0) {
+		pthread_t p_thread[2];
+		int thr_id;
+		int status;
+		int a = 1;
+		int b = 2;
 
-  return 0;
+		thr_id = pthread_create(&p_thread[0], NULL, FndThread, (void *)&a);
+
+		if(thr_id < 0) {
+			perror("thread create error: ");
+			exit(1);
+		}
+
+		thr_id = pthread_create(&p_thread[1], NULL, IPCThread, (void *)&b);
+
+		if(thr_id <0) {
+			perror("thread create error: ");
+			exit(1);
+		}
+
+		pthread_join(p_thread[0], (void **)&status);
+		pthread_join(p_thread[1], (void **)&status);
+
+	//}
+
+	//else if(pid == -1) {
+	//	perror("fork error: ");
+	//	exit(1);
+	//}
+
+	printf("</body>\n</html>");
+
+	return 0;
 }
