@@ -12,8 +12,14 @@
 
 int main() {
 	printf("Content-type:text/html\n\n");
-	printf("<html>\n<head>\n<title>STOP WATCH!</title>\n</head>\n");
-	printf("<body>\n<p>Clear</p>\n");
+	printf("<body>\n<p>Stop Watch</p>\n</br>\n");
+	printf("<form method=get action='num2.cgi'>\n");
+	printf("<input type='submit' name='button' value='Start'>\n</form>\n");
+	printf("<form method=get action='num_st.cgi'>\n");
+	printf("<input type='submit' name='button' value='Stop'>\n</form>\n");
+	printf("<form method=get action='num_cl.cgi'>\n");
+	printf("<input type='submit' name='button' value='Clear'>\n</form>\n");
+	printf("</body>\n</html>");
 
 	int fd;
 	char *str = "3";
@@ -23,8 +29,6 @@ int main() {
 	write(fd, str, strlen(str));
 	
 	close(fd);
-
-	printf("</body>\n</html>");
 
 	return 0;
 }
