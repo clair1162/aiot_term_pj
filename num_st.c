@@ -13,7 +13,7 @@
 int main() {
 	printf("Content-type:text/html\n\n");
 	printf("<body>\n<p>Stop Watch</p>\n</br>\n");
-	printf("<form method=get action='num2.cgi'>\n");
+	printf("<form method=get action='chae.cgi'>\n");
 	printf("<input type='submit' name='button' value='Start'>\n</form>\n");
 	printf("<form method=get action='num_st.cgi'>\n");
 	printf("<input type='submit' name='button' value='Stop'>\n</form>\n");
